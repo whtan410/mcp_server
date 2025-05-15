@@ -1,0 +1,170 @@
+Type 'exit' or 'quit' to end the chat.
+
+You: what is a drone
+Agent: ```json
+{
+  "definition": "A drone, also known as an unmanned aerial vehicle (UAV), is an aircraft without a human pilot aboard. Its flight is controlled either autonomously by onboard computers or by the remote control of a pilot on the ground or in another vehicle.",
+  "model_name": "Smart Drone",
+  "preview_link": "https://sketchfab.com/models/76430ca6692b4238a54b5d12e90550c5",
+  "is_downloadable": false
+}
+```
+
+You: what is a planet
+Agent: ```json
+{
+  "definition": "A drone, also known as an unmanned aerial vehicle (UAV), is an aircraft without a human pilot aboard. Its flight is controlled either autonomously by onboard computers or by the remote control of a pilot on the ground or in another vehicle.",
+  "model_name": "Smart Drone",
+  "preview_link": "https://sketchfab.com/models/76430ca6692b4238a54b5d12e90550c5",
+  "is_downloadable": false
+}
+```
+
+```json
+{
+  "definition": "A planet is a celestial body that orbits a star, is massive enough to be rounded by its own gravity, and has cleared its orbit of other debris. Planets are a fundamental part of solar systems and can be composed of rock, gas, or a combination of both.",
+  "model_name": "Sand Planet Miku",
+  "preview_link": "https://sketchfab.com/models/d2f6991a26294d6db4822fdf6d37cf2a",
+  "is_downloadable": false
+}
+```
+
+You: what is a car
+Agent: ```json
+{
+  "definition": "A drone, also known as an unmanned aerial vehicle (UAV), is an aircraft without a human pilot aboard. Its flight is controlled either autonomously by onboard computers or by the remote control of a pilot on the ground or in another vehicle.",
+  "model_name": "Smart Drone",
+  "preview_link": "https://sketchfab.com/models/76430ca6692b4238a54b5d12e90550c5",
+  "is_downloadable": false
+}
+```
+
+```json
+{
+  "definition": "A planet is a celestial body that orbits a star, is massive enough to be rounded by its own gravity, and has cleared its orbit of other debris. Planets can be rocky, gaseous, or icy in composition.",
+  "model_name": "Sand Planet Miku",
+  "preview_link": "https://sketchfab.com/models/d2f6991a26294d6db4822fdf6d37cf2a",
+  "is_downloadable": false
+}
+```
+
+```json
+{
+  "definition": "A car is a wheeled motor vehicle used for transportation. Most cars are designed to run primarily on roads, seat one to eight people, and typically have four wheels.",
+  "model_name": "Car - police car (concept)",
+  "preview_link": "https://sketchfab.com/models/29c76ea294264212b0598f358fbce111",
+  "is_downloadable": false
+}
+```
+
+You: what is an apple
+Agent: ```json
+{
+  "drone": {
+    "definition": "A drone, also known as an unmanned aerial vehicle (UAV), is an aircraft without a human pilot aboard. Its flight is controlled either autonomously by onboard computers or by the remote control of a pilot on the ground or in another vehicle.",
+    "model_name": "Smart Drone",
+    "preview_link": "https://sketchfab.com/models/76430ca6692b4238a54b5d12e90550c5",
+    "is_downloadable": false
+  },
+  "planet": {
+    "definition": "A planet is a celestial body that orbits a star, is massive enough to be rounded by its own gravity, and has cleared its orbit of other debris.",
+    "model_name": "Sand Planet Miku",
+    "preview_link": "https://sketchfab.com/models/d2f6991a26294d6db4822fdf6d37cf2a",
+    "is_downloadable": false
+  },
+  "car": {
+    "definition": "A car is a wheeled motor vehicle used for transportation, typically powered by an internal combustion engine or electric motor.",
+    "model_name": "Car - police car (concept)",
+    "preview_link": "https://sketchfab.com/models/29c76ea294264212b0598f358fbce111",
+    "is_downloadable": false
+  },
+  "apple": {
+    "definition": "An apple is a sweet, edible fruit produced by an apple tree, commonly consumed fresh or used in cooking and baking.",
+    "model_name": "KITCHEN | POSSESSIONS GAME | APPLE ARCADE",
+    "preview_link": "https://sketchfab.com/models/28f9db4c2b4849a29f0ea17b9e6dd856",
+    "is_downloadable": false
+  }
+}
+```
+
+You: what is newton first law of motion
+Agent: ```json
+{
+  "responses": [
+    {
+      "definition": "A drone, also known as an unmanned aerial vehicle (UAV), is an aircraft without a human pilot aboard. Its flight is controlled either autonomously by onboard computers or by the remote control of a pilot on the ground or in another vehicle.",
+      "model_name": "Smart Drone",
+      "preview_link": "https://sketchfab.com/models/76430ca6692b4238a54b5d12e90550c5",
+      "is_downloadable": false
+    },
+    {
+      "definition": "A planet is a celestial body that orbits a star, is massive enough to be rounded by its own gravity, and has cleared its orbit of other debris. Planets are part of solar systems and can vary greatly in size, composition, and atmosphere.",
+      "model_name": "Sand Planet Miku",
+      "preview_link": "https://sketchfab.com/models/d2f6991a26294d6db4822fdf6d37cf2a",
+      "is_downloadable": false
+    },
+    {
+      "definition": "A car is a wheeled motor vehicle used for transportation. Most definitions of cars state that they run primarily on roads, seat one to eight people, have four wheels, and mainly transport people rather than goods.",
+      "model_name": "Car - police car (concept)",
+      "preview_link": "https://sketchfab.com/models/29c76ea294264212b0598f358fbce111",
+      "is_downloadable": false
+    },
+    {
+      "definition": "An apple is a sweet, edible fruit produced by an apple tree (Malus domestica). Apples are cultivated worldwide and are one of the most popular fruits due to their flavor, versatility, and nutritional value.",
+      "model_name": "KITCHEN | POSSESSIONS GAME | APPLE ARCADE",
+      "preview_link": "https://sketchfab.com/models/28f9db4c2b4849a29f0ea17b9e6dd856",
+      "is_downloadable": false
+    },
+    {
+      "definition": "Newton's First Law of Motion states that an object will remain at rest or in uniform motion in a straight line unless acted upon by an external force. This principle is also known as the law of inertia.",
+      "model_name": "Newton's First Law of Motion - 3d Animation",
+      "preview_link": "https://sketchfab.com/models/2bdff09c38ea44dea9c211783b37c271",
+      "is_downloadable": false
+    }
+  ]
+}
+```
+
+You: waht is ear anatomy
+Agent: ```json
+{
+  "results": [
+    {
+      "definition": "A drone, also known as an unmanned aerial vehicle (UAV), is an aircraft without a human pilot aboard. Its flight is controlled either autonomously by onboard computers or by the remote control of a pilot on the ground or in another vehicle.",
+      "model_name": "Smart Drone",
+      "preview_link": "https://sketchfab.com/models/76430ca6692b4238a54b5d12e90550c5",
+      "is_downloadable": false
+    },
+    {
+      "definition": "A planet is a celestial body that orbits a star, is massive enough to be rounded by its own gravity, and has cleared its orbit of other debris.",
+      "model_name": "Sand Planet Miku",
+      "preview_link": "https://sketchfab.com/models/d2f6991a26294d6db4822fdf6d37cf2a",
+      "is_downloadable": false
+    },
+    {
+      "definition": "A car is a wheeled motor vehicle used for transportation, typically powered by an internal combustion engine or an electric motor.",
+      "model_name": "Car - police car (concept)",
+      "preview_link": "https://sketchfab.com/models/29c76ea294264212b0598f358fbce111",
+      "is_downloadable": false
+    },
+    {
+      "definition": "An apple is a sweet, edible fruit produced by an apple tree (Malus domestica). It is one of the most widely cultivated tree fruits and comes in various colors such as red, green, and yellow.", 
+      "model_name": "KITCHEN | POSSESSIONS GAME | APPLE ARCADE",
+      "preview_link": "https://sketchfab.com/models/28f9db4c2b4849a29f0ea17b9e6dd856",
+      "is_downloadable": false
+    },
+    {
+      "definition": "Newton's First Law of Motion states that an object will remain at rest or in uniform motion in a straight line unless acted upon by an external force. This is also known as the law of inertia.",
+      "model_name": "Newton's First Law of Motion - 3d Animation",
+      "preview_link": "https://sketchfab.com/models/2bdff09c38ea44dea9c211783b37c271",
+      "is_downloadable": false
+    },
+    {
+      "definition": "Ear anatomy refers to the structure of the ear, which includes the outer ear, middle ear, and inner ear. These parts work together to collect sound waves, convert them into electrical signals, and send them to the brain for interpretation.",
+      "model_name": "Ear cross-section",
+      "preview_link": "https://sketchfab.com/models/4f5438fc9337454587ec4a2c30c8c42f",
+      "is_downloadable": false
+    }
+  ]
+}
+```
