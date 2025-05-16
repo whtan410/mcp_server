@@ -48,54 +48,113 @@ class SketchfabService:
             }
         ]
         
+    # async def get_model_info(self, query: str) -> Dict[str, Any]:
+    #     """Process a query and return model information as a JSON-serializable dict"""
+    #     try:
+    #         server_params = StdioServerParameters(
+    #             command="node",
+    #             args=["C:/Users/pa662/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", self.api_key],
+    #         )
+            
+    #         async with stdio_client(server_params) as (read, write):
+    #             async with ClientSession(read, write) as session:
+    #                 await session.initialize()
+    #                 tools = await load_mcp_tools(session)
+    #                 agent = create_react_agent(model=self.model, tools=tools, prompt=self.system_instructions)
+    #                 attempt = 0
+    #                 search_tool_used = False
+                    
+    #                 while attempt < 5 and not search_tool_used:
+    #                     res = await agent.ainvoke({"messages": [("human", query)]})
+    #                     print(res)
+    #                     if len(res["messages"]) >= 2 and (res["messages"][-2].type == "tool" or res["messages"][-2].type == "ai"):
+    #                         search_tool_used = True
+    #                     else:
+    #                         attempt += 1
+
+    #                 print(res)
+    #                 final_result = res["messages"][-1].content
+    #                 return final_result
+    
+    #     except Exception as e:
+    #         print(e)
+    #         return {"error": str(e)}
+
     async def get_model_info(self, query: str) -> Dict[str, Any]:
         """Process a query and return model information as a JSON-serializable dict"""
         try:
+            print(f"DEBUG: Starting get_model_info with query: {query}")
             server_params = StdioServerParameters(
                 command="node",
-                args=["C:/Users/tanweihan/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", self.api_key],
+                args=["C:/Users/pa662/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", self.api_key],
             )
             
+            print(f"DEBUG: Server parameters set up with API key: {self.api_key[:5] if self.api_key else 'None'}...")
             async with stdio_client(server_params) as (read, write):
+                print("DEBUG: Stdio client initialized")
                 async with ClientSession(read, write) as session:
+                    print("DEBUG: Client session started")
                     await session.initialize()
+                    print("DEBUG: Session initialized")
                     tools = await load_mcp_tools(session)
-                    agent = create_react_agent(self.model, tools)
+                    print(f"DEBUG: MCP tools loaded: {[t.name for t in tools if hasattr(t, 'name')]}")
+                    agent = create_react_agent(model=self.model, tools=tools, prompt=self.system_instructions)
+                    print("DEBUG: React agent created")
+                    attempt = 0
+                    search_tool_used = False
                     
-                    messages = self.system_instructions.copy()
-                    messages.append({"role": "user", "content": query})
+                    while attempt < 5 and not search_tool_used:
+                        print(f"DEBUG: Attempt {attempt+1}/5 to get model info")
+                        try:
+                            res = await agent.ainvoke({"messages": [("human", query)]})
+                            print(f"DEBUG: Agent response received, message count: {len(res['messages'])}")
+                            print(f"DEBUG: Message types: {[m.type for m in res['messages'] if hasattr(m, 'type')]}")
+                            
+                            if len(res["messages"]) >= 2:
+                                print(f"DEBUG: Checking message type: {res['messages'][-2].type}")
+                                if res["messages"][-2].type == "tool" or res["messages"][-2].type == "ai":
+                                    search_tool_used = True
+                                    print("DEBUG: Search tool used successfully")
+                                else:
+                                    attempt += 1
+                                    print(f"DEBUG: Search tool not used, incrementing attempt to {attempt}")
+                            else:
+                                attempt += 1
+                                print(f"DEBUG: Not enough messages in response, incrementing attempt to {attempt}")
+                        except Exception as inner_e:
+                            print(f"DEBUG: Error in attempt {attempt+1}: {str(inner_e)}")
+                            attempt += 1
+
+                    print(f"DEBUG: Final response keys: {res.keys()}")
+                    print(f"DEBUG: Final message count: {len(res['messages'])}")
+                    final_result = res["messages"][-1].content
+                    print(f"DEBUG: Final result type: {type(final_result)}")
                     
-                    response = await agent.ainvoke({"messages": messages})
-                    ai_message = response["messages"][-1].content
+                    # Try to parse the result as JSON if it's a string
+                    if isinstance(final_result, str):
+                        try:
+                            import json
+                            parsed = json.loads(final_result)
+                            print(f"DEBUG: Result parsed as JSON with keys: {list(parsed.keys())}")
+                        except json.JSONDecodeError:
+                            print("DEBUG: Result is not valid JSON")
+                        except Exception as json_err:
+                            print(f"DEBUG: Error parsing result: {str(json_err)}")
                     
-                    # Try to parse as JSON
-                    try:
-                        result = json.loads(ai_message)
-                        return result
-                    
-                    except json.JSONDecodeError:
-                        # If it's not valid JSON, return the raw message
-                        return {
-                            "definition": ai_message,
-                            "model_name": None,
-                            "preview_link": None,
-                            "is_downloadable": None
-                        }
+                    return final_result
+
         except Exception as e:
-            return {
-                "error": str(e),
-                "definition": f"An error occurred: {str(e)}",
-                "model_name": None,
-                "preview_link": None,
-                "is_downloadable": None
-            }
-    
+            import traceback
+            print(f"DEBUG ERROR: {str(e)}")
+            print(f"DEBUG TRACEBACK: {traceback.format_exc()}")
+            return {"error": str(e), "traceback": traceback.format_exc()}
+        
     # async def search_models(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
     #     """Search for models directly using the MCP tools"""
     #     try:
     #         server_params = StdioServerParameters(
     #             command="node",
-    #             args=["C:/Users/tanweihan/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", self.api_key],
+    #             args=["C:/Users/pa662/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", self.api_key],
     #         )
             
     #         async with stdio_client(server_params) as (read, write):
@@ -126,7 +185,7 @@ class SketchfabService:
     #     try:
     #         server_params = StdioServerParameters(
     #             command="node",
-    #             args=["C:/Users/tanweihan/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", self.api_key],
+    #             args=["C:/Users/pa662/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", self.api_key],
     #         )
             
     #         async with stdio_client(server_params) as (read, write):
