@@ -16,6 +16,7 @@ from langchain_openai import AzureChatOpenAI
 from dotenv import load_dotenv
 from typing import Dict, Any, Optional, List
 
+load_dotenv(override=True)
 
 router = APIRouter(prefix="/api/sketchfab", tags=["sketchfab"])
 
@@ -23,7 +24,7 @@ sketch_fab_api_key = os.getenv("SKETCHFAB_API_KEY")
 
 server_params = StdioServerParameters(
     command="node",
-    args=["C:/Users/pa662/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", sketch_fab_api_key],
+    args=["C:/Users/USER/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", sketch_fab_api_key],
 )
 
 model = AzureChatOpenAI(
