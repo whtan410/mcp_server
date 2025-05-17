@@ -16,7 +16,7 @@ app.add_middleware(
 
 # Include routers
 #app.include_router(sketchfab_router.router)
-app.include_router(learningstyle_router.router)
+#app.include_router(learningstyle_router.router)
 app.include_router(sketchfab_qwen.router)
 app.include_router(learningstyle_determiner.router)
 app.include_router(speech_router.router)

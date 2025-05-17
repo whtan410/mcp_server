@@ -22,7 +22,7 @@ from typing import Dict, Any, Optional, List
 
 load_dotenv(override=True)
 
-router = APIRouter(prefix="/api/learningstyledeterminer", tags=["sketchfablearning"])
+router = APIRouter(prefix="/api/learning-style-determiner", tags=["Learning Style Determiner"])
 
 sketch_fab_api_key = os.getenv("SKETCHFAB_API_KEY")
 dashscope_api_key = os.getenv("DASH_SCOPE_API_KEY")
@@ -37,180 +37,148 @@ class LearningStyle(str, Enum):
 class LearningStyleRequest(BaseModel):
     answers: str
 
+# class OneEnum(str, Enum):
+#    VISUAL="Visualizing the information in your mind"
+#    AUDITORY="Saying it out loud or listening to someone explain it"
+#    KINESTHETIC="Writing it down or reading it repeatedly"
+#    READING_WRITING="Doing something physical related to the information"
+
+
+# class TwoEnum(str, Enum):
+#     VISUAL = "Using diagrams, charts, or mind maps"
+#     AUDITORY = "Listening to recordings or discussing the material with others"
+#     READING_WRITING = "Reading textbooks or taking detailed notes"
+#     KINESTHETIC = "Engaging in hands-on activities or experiments"
+
+# class ThreeEnum(str, Enum):
+#     VISUAL = "Watching someone demonstrate the skill"
+#     AUDITORY = "Listening to instructions or explanations"
+#     READING_WRITING = "Reading about the steps involved"
+#     KINESTHETIC = "Trying it out yourself and learning through practice"
+
+# class FourEnum(str, Enum):
+#     VISUAL = "Watching videos or looking at visual presentations"
+#     AUDITORY = "Participating in discussions or listening to lectures"
+#     READING_WRITING = "Reading articles or writing essays"
+#     KINESTHETIC = "Engaging in role-playing or building models"
+
+# class FiveEnum(str, Enum):
+#     VISUAL = "Looking at a map or visual guide"
+#     AUDITORY = "Listening to spoken directions"
+#     READING_WRITING = "Reading written instructions"
+#     KINESTHETIC = "Following someone or exploring on your own"
+
+# class SixEnum(str, Enum):
+#     VISUAL = "Drawing out the problem or visualizing the solution"
+#     AUDITORY = "Talking through the problem with someone"
+#     READING_WRITING = "Writing down the problem and possible solutions"
+#     KINESTHETIC = "Experimenting with different solutions until something works"
+
+class LearningAnswers(BaseModel):
+    one: str
+    two:str
+    three: str
+    four: str
+    five: str
+    six: str
+
 
 # Use OpenAI-compatible API to access Qwen
 model = ChatOpenAI(
-    model="qwen-plus",  # Or qwen-max, qwen-turbo, etc.
+    model="qwen-max",  # Or qwen-max, qwen-turbo, etc.
     api_key=os.getenv("DASH_SCOPE_API_KEY"),
     base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
     temperature=0.1,
     max_tokens=4096,  # Adjust based on your needs
 )
 
-# system_instructions = """
-#         You are an intelligent teaching assistant whose role is to determine the learning style of a user based on their answers to a set og six multiple choice questions.
-#         The four possible learning styles are as follows:
-
-#         1. Visual Learner 
-#         2. Auditory Learner 
-#         3. Kinesthetic Learner 
-#         4. Reading and Writing Learner 
-
-#         The user will answer six multiple choice questions:
-
-#         1. When you are trying to remember something, which method do you find most effective?
-#            Answers:
-#            A) Visualizing the information in your mind
-#            B) Saying it out loud or listening to someone explain it
-#            C) Writing it down or reading it repeatedly
-#            D) Doing something physical related to the information
-
-#         2. How do you prefer to study for a test?
-#            Answers:
-#            A) Using diagrams, charts, or mind maps
-#            B) Listening to recordings or discussing the material with others
-#            C) Reading textbooks or taking detailed notes
-#            D) Engaging in hands-on activities or experiments
-
-#         3. When learning a new skill, what approach do you find most helpful?
-#            Answers:
-#            A) Watching someone demonstrate the skill
-#            B) Listening to instructions or explanations
-#            C) Reading about the steps involved
-#            D) Trying it out yourself and learning through practice
-
-#         4. In a classroom setting, what type of activity do you enjoy the most?
-#            Answers:
-#            A) Watching videos or looking at visual presentations
-#            B) Participating in discussions or listening to lectures
-#            C) Reading articles or writing essays
-#            D) Engaging in role-playing or building models
-
-#         5. How do you prefer to receive directions when going to a new place?
-#            Answers:
-#            A) Looking at a map or visual guide
-#            B) Listening to spoken directions
-#            C) Reading written instructions
-#            D) Following someone or exploring on your own
-
-#         6. When you are trying to solve a problem, what strategy do you typically use?
-#            Answers:
-#            A) Drawing out the problem or visualizing the solution
-#            B) Talking through the problem with someone
-#            C) Writing down the problem and possible solutions
-#            D) Experimenting with different solutions until something works
-
-#         The user will input their answers in this format:
-#         ***User input format***
-#         1. Saying it out loud or listening to someone explain it
-#         2. Engaging in hands-on activities or experiments
-#         3. Trying it out yourself and learning through practice
-#         4. Engaging in role-playing or building models
-#         5. Following someone or exploring on your own
-#         6. Experimenting with different solutions until something works
-#         ***End user input format***
-
-#         You, the assistant, will answer in json format, providing the index of the learning style and a textual justification.
-#         IMPORTANT RULE: you MUST answer in this format. Do not add or remove any fields.
-#         ***Your output format***
-#         ```json
-#         {
-#             "style": "Auditory",
-#             "justification": "You appear to get things done by listening."
-#         }
-#         ```  
-#         ***End output format
-
-#         **Example Interaction**
-#         User: 
-#         1. Saying it out loud or listening to someone explain it
-#         2. Listening to recordings or discussing the material with others
-#         3. Listening to instructions or explanations
-#         4. Participating in discussions or listening to lectures
-#         5. Listening to spoken directions
-#         6. Experimenting with different solutions until something works
-
-#         Assistant (Your response):
-#         ```json
-#         {
-#             "style": "Auditory",
-#             "justification": "You appear to get things done by listening."
-#         }
-#         ```        
-# """
 system_instructions = """
 You are an intelligent teaching assistant whose role is to determine a user's primary learning style based on their answers to six multiple choice questions.
 
 The four possible learning styles are:
-1. Visual Learner - Learns best through seeing images, diagrams, and visual information
-2. Auditory Learner - Learns best through listening, discussions, and verbal explanations
-3. Kinesthetic Learner - Learns best through physical activities, hands-on experiences, and movement
-4. Reading/Writing Learner - Learns best through text-based materials, note-taking, and written information
-
-The user will answer six multiple choice questions, where:
-- Options A correspond to Visual learning preferences
-- Options B correspond to Auditory learning preferences
-- Options C correspond to Reading/Writing learning preferences
-- Options D correspond to Kinesthetic learning preferences
+1. Visual Learner - Learns best through seeing images, diagrams, and visual information. This style has an index of 1.
+2. Auditory Learner - Learns best through listening, discussions, and verbal explanations. This style has an index of 2.
+3. Kinesthetic Learner - Learns best through physical activities, hands-on experiences, and movement. This style has an index of 3.
+4. Reading/Writing Learner - Learns best through text-based materials, note-taking, and written information. This style has an index of 4.
 
 The questions and answer options are:
+1. Your teacher is showing the class how to do a science experiment. How do you understand it best?
 
-1. When you are trying to remember something, which method do you find most effective?
-   A) Visualizing the information in your mind
-   B) Saying it out loud or listening to someone explain it
-   C) Writing it down or reading it repeatedly
-   D) Doing something physical related to the information
+A. By watching what the teacher is doing.
 
-2. How do you prefer to study for a test?
-   A) Using diagrams, charts, or mind maps
-   B) Listening to recordings or discussing the material with others
-   C) Reading textbooks or taking detailed notes
-   D) Engaging in hands-on activities or experiments
+B. By listening carefully to what the teacher says.
 
-3. When learning a new skill, what approach do you find most helpful?
-   A) Watching someone demonstrate the skill
-   B) Listening to instructions or explanations
-   C) Reading about the steps involved
-   D) Trying it out yourself and learning through practice
+C. By reading the steps on the worksheet.
 
-4. In a classroom setting, what type of activity do you enjoy the most?
-   A) Watching videos or looking at visual presentations
-   B) Participating in discussions or listening to lectures
-   C) Reading articles or writing essays
-   D) Engaging in role-playing or building models
+D. By trying the experiment yourself.
 
-5. How do you prefer to receive directions when going to a new place?
-   A) Looking at a map or visual guide
-   B) Listening to spoken directions
-   C) Reading written instructions
-   D) Following someone or exploring on your own
+2. You need to learn a poem for homework. What do you do?
 
-6. When you are trying to solve a problem, what strategy do you typically use?
-   A) Drawing out the problem or visualizing the solution
-   B) Talking through the problem with someone
-   C) Writing down the problem and possible solutions
-   D) Experimenting with different solutions until something works
+A. Draw pictures to help remember the parts.
+
+B. Say it out loud over and over again.
+
+C. Write it down a few times to help you remember.
+
+D. Act it out with hand movements or walk around while practicing.
+
+3. When you're trying to figure out how a new game works, what helps you the most?
+
+A. Looking at pictures or diagrams.
+
+B. Having someone explain it to you.
+
+C. Reading the instructions.
+
+D. Jumping in and trying it out.
+
+4. Your class is learning about volcanoes. What do you enjoy most?
+
+A. Watching videos or looking at volcano pictures.
+
+B. Listening to the teacher tell exciting facts.
+
+C. Reading about volcanoes in a book or online.
+
+D. Building a volcano model or doing a project.
+
+5. You’re asked to give a short presentation in class. How do you prepare?
+
+A. Make a colorful poster or slideshow.
+
+B. Practice talking out loud with a friend.
+
+C. Write down everything you want to say.
+
+D. Rehearse by moving around and acting it out.
+
+6. You’re learning a new song in music class. What helps you remember it?
+
+A. Watching the teacher’s hand movements or sheet music.
+
+B. Singing it over and over again.
+
+C. Reading the lyrics quietly to yourself.
+
+D. Clapping or tapping the beat while singing.
 
 The user will input their answers by providing the full text of their chosen options, like this:
 ***User input format***
-1. Saying it out loud or listening to someone explain it
-2. Engaging in hands-on activities or experiments
-3. Trying it out yourself and learning through practice
-4. Engaging in role-playing or building models
-5. Following someone or exploring on your own
-6. Experimenting with different solutions until something works
+1. By watching what the teacher is doing.
+2. Draw pictures to help remember the parts.
+3. Looking at pictures or diagrams.
+4. Watching videos or looking at volcano pictures.
+5. Make a colorful poster or slideshow.
+6. You’re learning a new song in music class. What helps you remember it?
 ***End user input format***
 
-ANALYSIS INSTRUCTIONS:
-1. Count how many A, B, C, and D type answers the user has selected
-2. Determine their primary learning style based on which type has the highest count
-3. If there's a tie, consider the strength of preference in your justification
-4. Provide a clear, personalized justification that explains their learning preferences
+Provide a clear, personalized justification that explains their learning preferences
 
 YOUR RESPONSE MUST BE IN THIS EXACT JSON FORMAT:
 ```json
 {
     "style": "Visual|Auditory|Kinesthetic|Reading/Writing",
+    "style_index": 1|2|3|4
     "justification": "A personalized explanation of why this learning style fits the user's preferences"
 }
 
@@ -218,37 +186,66 @@ Example:
 User: 
 
 
-Saying it out loud or listening to someone explain it
-Listening to recordings or discussing the material with others
-Listening to instructions or explanations
-Participating in discussions or listening to lectures
-Listening to spoken directions
-Experimenting with different solutions until something works
+1. By watching what the teacher is doing.
+2. Draw pictures to help remember the parts.
+3. Looking at pictures or diagrams.
+4. Watching videos or looking at volcano pictures.
+5. Make a colorful poster or slideshow.
+6. You’re learning a new song in music class. What helps you remember it?
 
 Your response:
 
 
 {
     "style": "Auditory",
+    "style_index": "2",
     "justification": "You strongly prefer auditory learning methods. In 5 of 6 questions, you chose options related to listening, discussing, and verbal communication. You learn best by hearing information, participating in discussions, and talking through concepts."
 }
 
 """
 
 @router.post("/determine-learning-style")
-async def determine_learning_style(request: LearningStyleRequest) -> Dict[str, Any]:
+async def determine_learning_style(request: LearningAnswers) -> Dict[str, Any]:
     """
     Determine a user's learning style based on their answers to six questions.
     
-    The input should be the user's answers to the six questions in text format.
-    Returns the determined learning style index and justification.
+    The input should be the user's answers to the six questions in json format. It will then be parssed into a single string to query Qwen.
+    Returns the determined learning style, style index and justification.
+
+    styles and their indexes:\n
+    Visual: 1\n
+    Auditory: 2\n
+    Kinesthetic: 3\n
+    Reading/Writing: 4\n
+
+    Example json input:\n
+    {\n
+        "one": "By trying the experiment yourself.",\n
+        "two": "Draw pictures to help remember the parts.",\n
+        "three": "Jumping in and trying it out.",\n
+        "four": "Watching videos or looking at volcano pictures.",\n
+        "five": "Make a colorful poster or slideshow.",\n
+        "six": "Watching the teacher’s hand movements or sheet music."\n
+    }\n
+
+    Example json output:\n
+    {\n
+        "response": {\n
+            "style": "Visual",\n
+            "style_index": 1,\n
+            "justification": "Your answers indicate a strong preference for visual learning. In most of your responses, you chose options that involve seeing images, diagrams, or visual aids to understand and remember information. For example, you prefer watching videos, looking at pictures, and observing hand movements or sheet music. These preferences show that you learn best when information is presented visually."\n
+        }\n
+    }\n
+
     """
     try:
+        answers = f"1. {request.one}\n2. {request.two}\n3. {request.three}\n4. {request.four}\n5. {request.five}\n6. {request.six}"
+
         # Get response from the model
         response = await model.ainvoke(
             [
                 {"role": "system", "content": system_instructions},
-                {"role": "user", "content": request.answers}
+                {"role": "user", "content": answers}
             ]
         )
         
@@ -280,6 +277,13 @@ async def determine_learning_style(request: LearningStyleRequest) -> Dict[str, A
         # if isinstance(result, dict) and "style" in result:
         #     style_index = result["style"]
         #     result["style_name"] = style_map.get(style_index, "unknown")
+
+        # fallback checker in case Qwen messes up the index
+        styles = ["visual", "auditory", "kinesthetic", "reading/writing"]
+        for i in range(len(styles)):
+            if 'style' in result and 'style_index' in result and result["style"].lower() == styles[i]:
+                result["style_index"] = i+1
+                break
         
         return {"response": result}
 

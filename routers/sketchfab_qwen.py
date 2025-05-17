@@ -100,7 +100,7 @@ system_instructions =  """
         Always adhere strictly to this procedure and JSON output format for such definition/explanation requests. Do not include any other text before or after the JSON object.
         """
 
-@router.post("/model-inform")
+@router.post("/model-info")
 async def get_model_info(query: str) -> Dict[str, Any]:
     """Process a query and return model information as a JSON-serializable dict"""
     try:
