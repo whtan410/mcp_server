@@ -1,10 +1,11 @@
 # routers/sketchfab_router.py
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
+from typing import List, Mapping, Optional, Dict, Any
 from services.sketchfab_service import SketchfabService
 
 # services/sketchfab_service.py
+from langchain.llms.base import LLM
 import os
 import asyncio
 import json
@@ -12,27 +13,32 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from langchain_mcp_adapters.tools import load_mcp_tools
 from langgraph.prebuilt import create_react_agent
-from langchain_openai import AzureChatOpenAI
+#from langchain_community.llms.dashscope import DashScope # Import Qwen model
+from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from typing import Dict, Any, Optional, List
 
 load_dotenv(override=True)
 
-router = APIRouter(prefix="/api/sketchfab", tags=["sketchfab"])
+router = APIRouter(prefix="/api/sketchfabqwen", tags=["sketchfabqwen"])
 
 sketch_fab_api_key = os.getenv("SKETCHFAB_API_KEY")
+dashscope_api_key = os.getenv("DASH_SCOPE_API_KEY")
 
 server_params = StdioServerParameters(
     command="node",
-    args=["C:/Users/USER/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", sketch_fab_api_key],
+    args=["C:/Users/ischo/OneDrive/Documents/alibaba-2025/sketchfab-mcp-server/build/index.js", "--api-key", sketch_fab_api_key],
 )
 
-model = AzureChatOpenAI(
-        azure_deployment="gpt-4o",
-        api_version="2025-01-01-preview",
-        temperature=0.1,
-        max_tokens=None,
-    )
+# Use OpenAI-compatible API to access Qwen
+model = ChatOpenAI(
+    model="qwen-plus",  # Or qwen-max, qwen-turbo, etc.
+    api_key=os.getenv("DASH_SCOPE_API_KEY"),
+    base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    temperature=0.1,
+    max_tokens=4096,  # Adjust based on your needs
+)
+
 
 system_instructions =  """
         You have access to multiple tools, including one to search Sketchfab for 3D models and retrieve specific model details. Use tools sequentially when needed. Think step by step.
@@ -94,7 +100,7 @@ system_instructions =  """
         Always adhere strictly to this procedure and JSON output format for such definition/explanation requests. Do not include any other text before or after the JSON object.
         """
 
-@router.post("/model-info")
+@router.post("/model-inform")
 async def get_model_info(query: str) -> Dict[str, Any]:
     """Process a query and return model information as a JSON-serializable dict"""
     try:
@@ -137,78 +143,3 @@ async def get_model_info(query: str) -> Dict[str, Any]:
     except Exception as e:
         print(e)
         return {"error": str(e)}
-
-# @router.post("/model-info")
-# async def get_model_info(query: str) -> Dict[str, Any]:
-#     """Process a query and return model information as a JSON-serializable dict"""
-#     try:
-#         print(f"DEBUG: Starting router get_model_info with query: {query}")
-#         print(f"DEBUG: API Key available: {bool(os.getenv('SKETCHFAB_API_KEY'))}")
-        
-#         server_params = StdioServerParameters(
-#             command="node",
-#             args=["C:/Users/pa662/Documents/GitHub/sketchfab-mcp-server/build/index.js", "--api-key", os.getenv("SKETCHFAB_API_KEY")],
-#         )
-#         print(f"DEBUG: Server params created, about to start stdio_client")
-        
-#         try:
-#             # Try using a different asyncio policy for Windows
-#             import sys
-#             if sys.platform == "win32":
-#                 print("DEBUG: Setting WindowsSelectorEventLoopPolicy")
-#                 import asyncio
-#                 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-#         except Exception as policy_error:
-#             print(f"DEBUG: Error setting event loop policy: {policy_error}")
-        
-#         async with stdio_client(server_params) as (read, write):
-#             print("DEBUG: Stdio client initialized successfully")
-#             async with ClientSession(read, write) as session:
-#                 print("DEBUG: Client session started")
-#                 await session.initialize()
-#                 print("DEBUG: Session initialized")
-#                 tools = await load_mcp_tools(session)
-#                 print(f"DEBUG: MCP tools loaded: {[t.name for t in tools if hasattr(t, 'name')]}")
-#                 agent = create_react_agent(model=model, tools=tools, prompt=system_instructions)
-#                 print("DEBUG: React agent created")
-#                 attempt = 0
-#                 search_tool_used = False
-                
-#                 while attempt < 5 and not search_tool_used:
-#                     print(f"DEBUG: Attempt {attempt+1}/5 to get model info")
-#                     res = await agent.ainvoke({"messages": [("human", query)]})
-#                     print(f"DEBUG: Agent response received, message count: {len(res['messages'])}")
-                    
-#                     if len(res["messages"]) >= 2:
-#                         print(f"DEBUG: Checking message type: {res['messages'][-2].type}")
-#                         if res["messages"][-2].type == "tool" or res["messages"][-2].type == "ai":
-#                             search_tool_used = True
-#                             print("DEBUG: Search tool used successfully")
-#                         else:
-#                             attempt += 1
-#                             print(f"DEBUG: Search tool not used, incrementing attempt to {attempt}")
-#                     else:
-#                         attempt += 1
-#                         print(f"DEBUG: Not enough messages in response, incrementing attempt to {attempt}")
-
-#                 print(f"DEBUG: Final response received")
-#                 final_result = res["messages"][-1].content
-#                 print(f"DEBUG: Final result type: {type(final_result)}")
-                
-#                 # Try to parse as JSON to verify structure
-#                 if isinstance(final_result, str):
-#                     try:
-#                         import json
-#                         parsed = json.loads(final_result)
-#                         print(f"DEBUG: Result parsed as JSON keys: {list(parsed.keys())}")
-#                     except Exception as json_err:
-#                         print(f"DEBUG: Result is not valid JSON: {json_err}")
-                
-#                 return final_result
-
-#     except Exception as e:
-#         import traceback
-#         tb = traceback.format_exc()
-#         print(f"DEBUG ERROR: {str(e)}")
-#         print(f"DEBUG TRACEBACK: {tb}")
-#         return {"error": str(e), "traceback": tb}
