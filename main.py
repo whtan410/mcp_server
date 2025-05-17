@@ -1,7 +1,7 @@
 # main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import learningstyle_router, sketchfab_qwen, learningstyle_determiner
+from routers import learningstyle_router, read_router, sketchfab_qwen, learningstyle_determiner, speech_router
 
 app = FastAPI(title="Sketchfab 3D Model API")
 
@@ -19,7 +19,8 @@ app.add_middleware(
 app.include_router(learningstyle_router.router)
 app.include_router(sketchfab_qwen.router)
 app.include_router(learningstyle_determiner.router)
-
+app.include_router(speech_router.router)
+app.include_router(read_router.router)
 
 @app.get("/")
 async def root():

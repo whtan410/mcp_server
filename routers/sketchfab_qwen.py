@@ -2,8 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import List, Mapping, Optional, Dict, Any
-from services.sketchfab_service import SketchfabService
-
+ 
 # services/sketchfab_service.py
 from langchain.llms.base import LLM
 import os
@@ -24,10 +23,11 @@ router = APIRouter(prefix="/api/sketchfabqwen", tags=["sketchfabqwen"])
 
 sketch_fab_api_key = os.getenv("SKETCHFAB_API_KEY")
 dashscope_api_key = os.getenv("DASH_SCOPE_API_KEY")
+index_js = os.getenv("MCP_BUILD_INDEX")
 
 server_params = StdioServerParameters(
     command="node",
-    args=["C:/Users/ischo/OneDrive/Documents/alibaba-2025/sketchfab-mcp-server/build/index.js", "--api-key", sketch_fab_api_key],
+    args=[index_js, "--api-key", sketch_fab_api_key],
 )
 
 # Use OpenAI-compatible API to access Qwen
